@@ -1,43 +1,43 @@
 package com.springT.First.controller;
 
 import com.springT.First.entity.JournalEntry;
+import com.springT.First.service.JournalEntryService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
-@RequestMapping("/_journal")
-public class JournalController {
+@RequestMapping("/journal")
+public class JournalControllerV2 {
+    @Autowired
+    private JournalEntryService journalEntryService;
 
-    private Map<String, JournalEntry> journalEntries=new HashMap<>();
     @GetMapping
     public List<JournalEntry> getAll(){
-        return new ArrayList<>(journalEntries.values());
+        return journalEntryService.getAllEntry();
     }
     @PostMapping
     public boolean createEntry(@RequestBody JournalEntry newEntry){
-        journalEntries.put(newEntry.getId(), newEntry);
+        journalEntryService.saveEntry(newEntry);
         return true;
     }
     @DeleteMapping
     public boolean deleteAll(){
-        journalEntries.clear();
+        journalEntryService.deleteAllEntry();
         return true;
     }
     @GetMapping("/id/{myId}")
     public JournalEntry getEntryById(@PathVariable String myId){
-        return journalEntries.get(myId);
+        return journalEntryService.getEntryById(myId).orElse(null);
     }
     @DeleteMapping("/id/{myId}")
-    public JournalEntry deleteEntryById(@PathVariable String myId){
-        return journalEntries.remove(myId);
+    public void deleteEntryById(@PathVariable String myId){
+        journalEntryService.deleteEntryById(myId);
     }
     @PutMapping("/id/{myId}")
     public boolean updateEntryById(@PathVariable String myId, @RequestBody JournalEntry newEntry){
-        journalEntries.put(myId, newEntry);
+        journalEntryService.updateEntryById(myId, newEntry);
         return true;
     }
 }
