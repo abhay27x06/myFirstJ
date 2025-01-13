@@ -1,5 +1,7 @@
 package com.springT.First.entity;
 
+import lombok.Data;
+import lombok.NonNull;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.stereotype.Component;
@@ -10,6 +12,7 @@ import java.util.Date;
 public class JournalEntry {
     @Id
     private String id;
+    @NonNull
     private String title;
     private String content;
 
