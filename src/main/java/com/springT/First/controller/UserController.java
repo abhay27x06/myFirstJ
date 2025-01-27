@@ -6,6 +6,7 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +18,7 @@ import java.util.Optional;
 public class UserController {
     @Autowired
     private UserService userService;
+    private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
     @GetMapping
     public ResponseEntity<?> getAllUsers(){
         List<User> users=userService.getAllUser();
@@ -25,6 +27,15 @@ public class UserController {
         }
         return new ResponseEntity<>(users, HttpStatus.FOUND);
     }
+    @PostMapping("/register")
+    public void register(@RequestBody User user){
+        user.setPassword(encoder.encode(user.getPassword()));
+        userService.saveUser(user);
+    }
+    @PostMapping("/login")
+    public String login(@RequestBody User user){
+        return userService.verify(user);
+    }
     @DeleteMapping
     public ResponseEntity<?> deleteAllUsers(){
         userService.deleteAllUser();
@@ -32,6 +43,7 @@ public class UserController {
     }
     @PostMapping
     public ResponseEntity<?> createUser(@RequestBody User newUser){
+        newUser.setPassword(encoder.encode(newUser.getPassword()));
         userService.saveUser(newUser);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
