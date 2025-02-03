@@ -10,6 +10,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.spec.PSource;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,13 +20,16 @@ public class UserService {
     private UserRepository userRepository;
     @Autowired
     private AuthenticationManager authenticationManager;
-    public void saveUser(User user){
-        userRepository.save(user);
+    @Autowired
+    private JWTService jwtService;
+    public User saveUser(User user){
+        return userRepository.save(user);
     }
     public String verify(User user){
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUserName(), user.getPassword()));
         if (authentication.isAuthenticated()){
-            return "Success";
+            System.out.println(user);
+            return jwtService.generateToken(user.getUserName());
         }
         return "Failure";
     }

@@ -28,12 +28,13 @@ public class UserController {
         return new ResponseEntity<>(users, HttpStatus.FOUND);
     }
     @PostMapping("/register")
-    public void register(@RequestBody User user){
+    public User register(@RequestBody User user){
         user.setPassword(encoder.encode(user.getPassword()));
-        userService.saveUser(user);
+        return userService.saveUser(user);
     }
     @PostMapping("/login")
     public String login(@RequestBody User user){
+        System.out.println(user);
         return userService.verify(user);
     }
     @DeleteMapping
