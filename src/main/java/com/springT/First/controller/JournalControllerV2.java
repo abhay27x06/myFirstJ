@@ -35,16 +35,9 @@ public class JournalControllerV2 {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
     @Transactional
-    @PostMapping("/{userName}")
-    public ResponseEntity<?> createEntry(@RequestBody JournalEntry newEntry, @PathVariable String userName){
-        Optional<User> user = userService.findByUserName(userName);
-        if (user.isPresent()){
-            journalEntryService.saveEntry(newEntry);
-            user.get().getJournalEntries().add(newEntry);
-            userService.saveUser(user.get());
-            return new ResponseEntity<>(HttpStatus.CREATED);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    @PostMapping
+    public JournalEntry createEntry(@RequestBody JournalEntry newEntry){
+           return journalEntryService.saveEntry(newEntry);
     }
     @DeleteMapping
     public ResponseEntity<?> deleteAll(){
